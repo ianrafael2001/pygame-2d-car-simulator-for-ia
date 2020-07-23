@@ -10,16 +10,15 @@ passo
 
 Parte 1 (Simulador)
 
- ✔️ Mecanica de covimentação do veiculo
+ ✔️ Mecânica de movimentação do veiculo
  
  ✔️ Colisão com a pista
  
  ✔️ Sensores de distancia
  
- ⭕ Performace de distancia
+ ⭕ Desempenho de distancia
  
 
-Parte 2 (Inteligencia Artificial)
+Parte 2 (Inteligência Artificial)
 
  ⭕ Não iniciado
- 
