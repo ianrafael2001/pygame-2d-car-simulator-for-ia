@@ -10,9 +10,14 @@ passo
 
 Parte 1
  ✔️ Mecanica de covimentação do veiculo
+ 
  ✔️ Colisão com a pista
+ 
  ✔️ Sensores de distancia
+ 
  ⭕ Performace de distancia
+ 
 
 Parte 2
  ⭕ Não iniciado
+ 
