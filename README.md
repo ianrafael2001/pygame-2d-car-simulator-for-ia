@@ -9,6 +9,7 @@ A segunda parte é a parte onde será desenvolvido a IA. A IA terá que ser capa
 passo
 
 Parte 1
+
  ✔️ Mecanica de covimentação do veiculo
  
  ✔️ Colisão com a pista
@@ -19,5 +20,6 @@ Parte 1
  
 
 Parte 2
+
  ⭕ Não iniciado
  
