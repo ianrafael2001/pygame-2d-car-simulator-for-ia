@@ -8,7 +8,7 @@ A segunda parte é a parte onde será desenvolvido a IA. A IA terá que ser capa
 
 passo
 
-Parte 1
+Parte 1 (Simulador)
 
  ✔️ Mecanica de covimentação do veiculo
  
@@ -19,7 +19,7 @@ Parte 1
  ⭕ Performace de distancia
  
 
-Parte 2
+Parte 2 (Inteligencia Artificial)
 
  ⭕ Não iniciado
  
