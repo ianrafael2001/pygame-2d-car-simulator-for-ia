@@ -71,7 +71,7 @@ class Car(pygame.sprite.Sprite):
         self.acceleration = 0.0
         self.steering = 0.0
 
-    def update(self, dt,mapp):
+    def update(self, dt):
         self.velocity += (self.acceleration * dt, 0)
         self.velocity.x = max(-self.max_velocity, min(self.velocity.x, self.max_velocity))
 
@@ -167,18 +167,89 @@ class Car(pygame.sprite.Sprite):
 
 class Map(pygame.sprite.Sprite):
 
-    def __init__(self):
+    def __init__(self,width,height):
         pygame.sprite.Sprite.__init__(self)
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(current_dir, "src/lib/map/borda.png")        
+        image_path = os.path.join(current_dir, "src/lib/map/borda.png")
+        self.width = width     
+        self.height = height     
         self.image = pygame.image.load(image_path).convert_alpha()
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-
+        self.performace = self.wave((609,37),86,width,height)
 
     def update(self):
         pass
+    
+    def wave(self,goal,dist,width,height):        
+        map_name = "borda_black"
+        background = pygame.image.load('src/lib/map/'+ map_name +".jpg")
+        mapOfWorld = pygame.surfarray.array3d(background)
+        
+        heap = []
+        newheap = []
+        print(goal)
+        x, y = goal
+        lastwave = 3
+        width = width
+        height = height
 
+        matriz = []
+        for _ in range(width):
+            line = []
+            for __ in range(height):
+                line.append(0)
+            matriz.append(line)
+
+        # Start out by marking nodes around G with a 3
+        moves = [[x + 1, y], [x - 1, y], [x, y - 1], [x, y + 1]]
+        pixels=[]
+        #pixels = [(80,11),(80,12),(80,13),(80,14)]
+        for i in range(1,dist+1):
+            pixels.append((x,y+i))
+
+        for pixel in pixels:
+            x,y = pixel
+            moves.append([x + 1, y])
+            moves.append([x - 1, y])
+            moves.append([x, y - 1])
+            moves.append([x, y + 1])
+        for move in moves:
+            if not numpy.array_equal(mapOfWorld[move[0]][move[1]],(0,0,0)):
+                matriz[move[0]][move[1]] = 3
+                #mapOfWorld[move[0]][move[1]] = (0, (255-3)%255, 3%255)
+                heap.append(move)
+            
+
+        
+        for currentwave in range(4, int((width*height)/2)):
+            lastwave = lastwave + 1
+            while(heap != []):
+                position = heap.pop()
+                (x, y) = position
+                moves = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+                #x, y = position
+
+                for move in moves:
+                    if (move[0] < width and move[0] >= 0)  and (move[1] < height and move[1] >= 0):
+                        if not numpy.array_equal(mapOfWorld[move[0]][move[1]],(0,0,0)) and  numpy.array_equal(matriz[move[0]][move[1]],0):
+                            if not (numpy.array_equal(mapOfWorld[move[0]][move[1]],(0,0,0))) and numpy.array_equal(matriz[position[0]][position[1]],(currentwave - 1)):
+                                matriz[move[0]][move[1]] = (currentwave)
+                                #mapOfWorld[move[0]][move[1]] = (fabs(sin(radians(currentwave))*50),fabs(sin(radians(currentwave))*100),fabs(sin(radians(currentwave))*200))
+                                newheap.append(move)
+            '''                
+            if currentwave%5 == 0:
+                image = pygame.surfarray.make_surface(mapOfWorld)                
+                image = pygame.transform.scale(image,(width, height))
+                screen.blit(image, (0, 0))
+                pygame.display.flip()
+            '''    
+            if(newheap == []):
+                print ("Wavefront concluido")
+                return matriz #mapOfWorld
+            heap = newheap
+            newheap = []
+    
 class Game:
     def __init__(self):
         pygame.init()
@@ -193,14 +264,15 @@ class Game:
         self.font = pygame.font.SysFont(None, 24)
         
         self.array_map = pygame.surfarray.array3d(self.background)
+        
+        self.map_group = pygame.sprite.Group()
+        self.mapp = Map(self.width,self.height)
+        self.map_group.add(self.mapp)
 
     def run(self):
         car_group = pygame.sprite.Group()
         car = Car(70, 10)
         car_group.add(car)
-        map_group = pygame.sprite.Group()
-        mapp = Map()
-        map_group.add(mapp)
         ppu = 10
 
         while not self.exit:
@@ -239,14 +311,14 @@ class Game:
             car.steering = max(-car.max_steering, min(car.steering, car.max_steering))
             i=0
 
-            if pygame.sprite.groupcollide(map_group,car_group,False,False,pygame.sprite.collide_mask):
+            if pygame.sprite.groupcollide(self.map_group,car_group,False,False,pygame.sprite.collide_mask):
                 # Logica de colisão
                 break
             else:
                 pass
 
             # Logic
-            car.update(dt,mapp)
+            car.update(dt)
 
             # Drawing
             self.screen.fill((255, 255, 255))
@@ -262,7 +334,7 @@ class Game:
             i = 200
             j = 1
 
-            pygame.draw.rect(self.screen, (10,10,10), (280,190,350,175))
+            pygame.draw.rect(self.screen, (10,10,10), (280,190,350,200))
             for sensor_data in car_data['distance']:
                 img = self.font.render(str("distance: "+str(j)+": "+str(sensor_data)) , True, (189, 117, 9))
                 self.screen.blit(img, (300, i))
@@ -280,6 +352,9 @@ class Game:
             i += 20
             img4 = self.font.render("Steering: "+str(car_data['steering']) , True, (189, 117, 9))
             self.screen.blit(img4, (300, i))
+            i += 20
+            img5 = self.font.render("Performace: "+str(self.mapp.performace[car.rect.center[0]][car.rect.center[1]]) , True, (189, 117, 9))
+            self.screen.blit(img5, (300, i))
             
             img5 = self.font.render(str(int(self.clock.get_fps())) , True, (189, 117, 9))
             self.screen.blit(img5, (0, 0))

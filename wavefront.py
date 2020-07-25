@@ -59,7 +59,7 @@ def wave(goal,dist,mapOfWorld,screen,width,height):
                            
         if currentwave%1 == 0:
             image = pygame.surfarray.make_surface(mapOfWorld)                
-            image = pygame.transform.scale(image,(width*7, height*7))
+            image = pygame.transform.scale(image,(width, height))
             screen.blit(image, (0, 0))
             pygame.display.flip()
             
@@ -70,21 +70,21 @@ def wave(goal,dist,mapOfWorld,screen,width,height):
         newheap = []
 
 pygame.display.set_caption("Car tutorial")
-width = 200
-height = 120
-screen = pygame.display.set_mode((width*7, height*7))
-background = pygame.image.load('wavefront_1.jpg')
+width = 426
+height = 240
+screen = pygame.display.set_mode((width, height))
+background = pygame.image.load('src/lib/map/borda_black_min.jpg')
 clock = pygame.time.Clock()
 ticks = 30
 exit = False
 array_map = pygame.surfarray.array3d(background)
 print(len(array_map),len(array_map[1]))
 pygame.init()
-run_performace,world = wave((102,11),10,array_map,screen,width,height)
+run_performace,world = wave((102,11),30,array_map,screen,width,height)
 print("desenhando onda...")
 
 image = pygame.surfarray.make_surface(world)
-image = pygame.transform.scale(image,(width*7, height*7))
+image = pygame.transform.scale(image,(width, height))
 while not exit:
     dt = clock.get_time() / 1000
 
