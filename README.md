@@ -16,7 +16,7 @@ Parte 1 (Simulador)
  
  ✔️ Sensores de distancia
  
- ⭕ Desempenho de distancia
+ ✔️ Desempenho de distancia
  
 
 Parte 2 (Inteligência Artificial)
